@@ -2,3 +2,4 @@ bin
 store
 .DS_Store
 vendor
+utils/*
