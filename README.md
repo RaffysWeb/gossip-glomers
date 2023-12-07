@@ -13,3 +13,9 @@ This is my take on solving the gossip glomers challenge from the Fly.io [blog](h
 [Challenge](https://fly.io/dist-sys/2/)
 
 [Solution](./02-unique-ID-generation/README.md)
+
+## Challenge #3a: Single-Node Broadcast
+
+[Challenge](https://fly.io/dist-sys/3a/)
+
+[Solution](./03a-single-node-broadcast/README.md)
