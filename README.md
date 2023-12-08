@@ -19,3 +19,9 @@ This is my take on solving the gossip glomers challenge from the Fly.io [blog](h
 [Challenge](https://fly.io/dist-sys/3a/)
 
 [Solution](./03a-single-node-broadcast/README.md)
+
+## Challenge #3b: Multi-Node Broadcast
+
+[Challenge](https://fly.io/dist-sys/3b/)
+
+[Solution](./03b-multi-node-broadcast/README.md)
