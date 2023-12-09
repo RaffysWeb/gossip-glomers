@@ -25,3 +25,9 @@ This is my take on solving the gossip glomers challenge from the Fly.io [blog](h
 [Challenge](https://fly.io/dist-sys/3b/)
 
 [Solution](./03b-multi-node-broadcast/README.md)
+
+## Challenge #3c: Multi-Node Broadcast with network partitions
+
+[Challenge](https://fly.io/dist-sys/3c/)
+
+[Solution](./03c-fault-tolerant-broadcast/README.md)
