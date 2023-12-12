@@ -13,3 +13,5 @@ This is my take on solving the gossip glomers challenge from the Fly.io [blog](h
 [Challenge #3c: Multi-Node Broadcast with network partitions](./03c-fault-tolerant-broadcast/README.md)
 
 [Challenge #3d: Efficient Broadcast, Part I](./03d-efficient-broadcast-part-I/README.md)
+
+[Challenge #3d: Efficient Broadcast, Part II](./03e-efficient-broadcast-part-II/README.md)

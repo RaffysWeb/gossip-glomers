@@ -13,8 +13,8 @@ With this approach we got a max latency of 402ms and a max of ~14 messages per o
 
 **Latencies**
 
-![image](./assets/latencies.png)
+[<img src="./assets/latencies.png" width="250"/>](./assets/latencies.png)
 
 **Messages per operation**
 
-![image](./assets/msgs-per-op.png)
+[<img src="./assets/msgs-per-op.png" width="250"/>](./assets/msgs-per-op.png)
