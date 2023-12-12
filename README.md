@@ -2,32 +2,14 @@
 
 This is my take on solving the gossip glomers challenge from the Fly.io [blog](https://fly.io/blog/gossip-glomers/).
 
-## Challenge #1: Echo
+[Challenge #1: Echo](./01-echo/README.md)
 
-[Challenge](https://fly.io/dist-sys/1/)
+[Challenge #2: Unique ID Generation](./02-unique-ID-generation/README.md)
 
-[Solution](./01-echo/README.md)
+[Challenge #3a: Single-Node Broadcast](./03a-single-node-broadcast/README.md)
 
-## Challenge #2: Unique ID Generation
+[Challenge #3b: Multi-Node Broadcast](./03b-multi-node-broadcast/README.md)
 
-[Challenge](https://fly.io/dist-sys/2/)
+[Challenge #3c: Multi-Node Broadcast with network partitions](./03c-fault-tolerant-broadcast/README.md)
 
-[Solution](./02-unique-ID-generation/README.md)
-
-## Challenge #3a: Single-Node Broadcast
-
-[Challenge](https://fly.io/dist-sys/3a/)
-
-[Solution](./03a-single-node-broadcast/README.md)
-
-## Challenge #3b: Multi-Node Broadcast
-
-[Challenge](https://fly.io/dist-sys/3b/)
-
-[Solution](./03b-multi-node-broadcast/README.md)
-
-## Challenge #3c: Multi-Node Broadcast with network partitions
-
-[Challenge](https://fly.io/dist-sys/3c/)
-
-[Solution](./03c-fault-tolerant-broadcast/README.md)
+[Challenge #3d: Efficient Broadcast, Part I](./03d-efficient-broadcast-part-I/README.md)
