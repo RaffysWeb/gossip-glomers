@@ -1,16 +1,21 @@
 package main
 
 import (
+	"context"
 	"encoding/json"
 	"log"
 	"sync"
+	"time"
 
 	maelstrom "github.com/jepsen-io/maelstrom/demo/go"
 )
 
+const timeout = time.Second
+
 type server struct {
 	n             *maelstrom.Node
 	lKv           *maelstrom.KV
+	sKv           *maelstrom.KV
 	logs          map[string][]logEntry
 	offsets       map[string]int
 	latestOffsets map[string]int
@@ -18,17 +23,20 @@ type server struct {
 }
 
 type logEntry struct {
-	offset int
-	msg    int
+	Offset int `json:"Offset"`
+	Msg    int `json:"Msg"`
 }
 
 func main() {
 	n := maelstrom.NewNode()
 	lKv := maelstrom.NewLinKV(n)
+	sKv := maelstrom.NewSeqKV(n)
 
 	s := &server{
-		n:             n,
-		lKv:           lKv,
+		n:   n,
+		lKv: lKv,
+		sKv: sKv,
+
 		logs:          make(map[string][]logEntry),
 		offsets:       make(map[string]int),
 		latestOffsets: make(map[string]int),
@@ -59,15 +67,71 @@ func (s *server) sendHandler(msg maelstrom.Message) error {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 
-	offset := s.latestOffsets[body.Key] + 1
+	ctx, Cancel := context.WithTimeout(context.Background(), timeout)
+	defer Cancel()
 
-  s.lKv.CompareAndSwap(ctx, body.Key, s.n.ID(),[offset, body.Msg], true)
-	s.logs[body.Key] = append(s.logs[body.Key], logEntry{
-		offset: offset,
-		msg:    body.Msg,
+	// Get the latest offset for the key
+	offset, err := s.sKv.ReadInt(ctx, body.Key)
+
+	if err != nil {
+		offset = 0
+	} else {
+		// we should check if the error is from the key not found or generic
+		offset += 1
+	}
+
+	// we could have a local cache and if the latest offset in the cache
+	// is the same we currently have, we don't need to read
+
+	// Get the logs from the store
+
+	// mockLogs := []logEntry{
+	// 	{Offset: 0, Msg: 1},
+	// 	{Offset: 1, Msg: 2},
+	// 	{Offset: 2, Msg: 3},
+	// }
+	//
+	// value, err := json.Marshal(mockLogs)
+	// if err != nil {
+	// 	return err
+	// }
+	//
+	// err = s.lKv.Write(ctx, "test", string(value))
+	//
+	// if err != nil {
+	// 	return err
+	// }
+
+	logs, err := s.lKv.Read(context.Background(), body.Key)
+	if err != nil {
+		// When trying to read before writing, we get an error
+		log.Printf("err: %v", err)
+		logs = `[]`
+	}
+
+	var logEntries []logEntry
+	if logsStr, ok := logs.(string); ok {
+		logsData := []byte(logsStr)
+		if err := json.Unmarshal(logsData, &logEntries); err != nil {
+			return err
+		}
+	}
+
+	logEntries = append(logEntries, logEntry{
+		Offset: offset,
+		Msg:    body.Msg,
 	})
 
-	s.latestOffsets[body.Key] = offset
+	entries, err := json.Marshal(logEntries)
+	if err != nil {
+		return err
+	}
+
+	err = s.lKv.Write(ctx, body.Key, string(entries))
+
+	if err != nil {
+		return err
+	}
 
 	return s.n.Reply(msg, map[string]any{
 		"type":   "send_ok",
@@ -97,7 +161,7 @@ func (s *server) pollHandler(msg maelstrom.Message) error {
 
 		for ; index < len(logs); index++ {
 			entries := logs[index]
-			intEntry := []int{entries.offset, entries.msg}
+			intEntry := []int{entries.Offset, entries.Msg}
 			msgs[key] = append(msgs[key], intEntry)
 		}
 	}
@@ -153,7 +217,7 @@ func (s *server) offsetIndex(logs []logEntry, offset int) int {
 	for i := range logs {
 		log.Printf("offsetIndex offset: %v", offset)
 		log.Printf("offsetIndex logs: %v", logs[i])
-		if logs[i].offset == offset {
+		if logs[i].Offset == offset {
 			log.Printf("found i: %v", i)
 			return i
 		}
@@ -167,7 +231,7 @@ func getOffsetIndex(entries []logEntry, startingOffset int) int {
 
 	for left <= right {
 		mid := left + (right-left)/2
-		currentOffset := entries[mid].offset
+		currentOffset := entries[mid].Offset
 
 		switch {
 		case currentOffset == startingOffset:
